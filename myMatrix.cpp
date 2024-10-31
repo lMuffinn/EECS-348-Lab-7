@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -27,15 +28,29 @@ class Matrix{
                 }
             }
         }
+        void Append(double value, int row, int col){
+            tdarr[row][col] = value;
+        }
 };
 
 Matrix getMatrixFromFile(){
     return Matrix(4);
+    ifstream inputFile; 
+    inputFile.open("matrix-data-file.txt");
+    if (inputFile.is_open()){
+        while (inputFile.good()){
+            string line;
+            inputFile >> line;
+            cout << line;
+        }
+    }
+    inputFile.close();
 }
 
 int main(){
-    Matrix myMat = Matrix(4);
-    myMat.Print();
+    getMatrixFromFile();
+    //Matrix myMat = Matrix(4);
+    //myMat.Print();
     char exit;
     cin >> exit;
 }
