@@ -34,23 +34,31 @@ class Matrix{
 };
 
 Matrix getMatrixFromFile(){
-    return Matrix(4);
-    ifstream inputFile; 
-    inputFile.open("matrix-data-file.txt");
+    ifstream inputFile ("matrix-data-file.txt"); 
+    Matrix mat;
     if (inputFile.is_open()){
-        while (inputFile.good()){
+        int size;
+        if (inputFile.good()) {
+            inputFile >> size;
+            for (int i = 0; i < size;i++){
+                for (int j = 0; j<size; j++){
+                    
+                }
+            }
             string line;
             inputFile >> line;
             cout << line;
         }
     }
     inputFile.close();
+    return mat;
 }
 
 int main(){
-    getMatrixFromFile();
+    Matrix myMat = getMatrixFromFile();
     //Matrix myMat = Matrix(4);
     //myMat.Print();
     char exit;
+    cout << "Enter any character to exit: ";
     cin >> exit;
 }
