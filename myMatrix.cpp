@@ -33,21 +33,27 @@ class Matrix{
         }
 };
 
-Matrix getMatrixFromFile(){
+Matrix getMatrixFromFile(char mode = '1'){
     ifstream inputFile ("matrix-data-file.txt"); 
     Matrix mat;
     if (inputFile.is_open()){
-        int size;
         if (inputFile.good()) {
+            int size;
             inputFile >> size;
-            for (int i = 0; i < size;i++){
-                for (int j = 0; j<size; j++){
-                    
+            mat = Matrix(size);
+            if (mode == '2'){
+                for (int i = 0; i< size*size;i++){
+                    string dummy;
+                    inputFile >> dummy;
                 }
             }
-            string line;
-            inputFile >> line;
-            cout << line;
+            for (int i = 0; i < size;i++){
+                for (int j = 0; j<size; j++){
+                    int value;
+                    inputFile >> value;
+                    mat.Append(value,i,j);
+                }
+            }
         }
     }
     inputFile.close();
@@ -55,10 +61,11 @@ Matrix getMatrixFromFile(){
 }
 
 int main(){
-    Matrix myMat = getMatrixFromFile();
-    //Matrix myMat = Matrix(4);
-    //myMat.Print();
+    Matrix m1_ = getMatrixFromFile();
+    Matrix m2_ = getMatrixFromFile('2');
+    m1_.Print();
+    m2_.Print();
     char exit;
-    cout << "Enter any character to exit: ";
+    cout << "\nType anything and press enter to exit: ";
     cin >> exit;
 }
