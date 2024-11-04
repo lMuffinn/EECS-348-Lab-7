@@ -1,78 +1,135 @@
-
+/*
+Matrix
+Description: Reads and manipulates matrix data from a file
+Author: Matthew Eagleman
+*/
 #include <iostream>
-
+#include <fstream>
 using namespace std;
+class Matrix{
+    private:
+        int size;
+        double** tdarr;
+    public:
+        Matrix(int s = 4){
+            //Create a new matrix filled with zeroes
+            size = s;
+            tdarr = new double*[s];
+            for (int i = 0; i < s; i++) {
+                tdarr[i] = new double[s];
+            }
+            for (int i = 0; i<s;i++){
+                for(int j=0; j<s; j++){
+                    tdarr[i][j] = 0;
+                }
+            }
+        }
+        Matrix operator+(Matrix const& obj){
+            //Overload the + operator to perform matrix addition
+            Matrix res = Matrix(size);
+            for (int row = 0; row<size;row++){
+                for (int col = 0; col < size; col++){
+                    int value = tdarr[row][col] + obj.tdarr[row][col];
+                    res.Append(value,row,col);
+                }
+            }
+            return res;
+        }
+        Matrix operator*(Matrix const& obj){
+            //Overload the * operator to perform matrix multiplication
+            Matrix res = Matrix(size);
+            for (int row = 0; row < size; row++){
+                for (int col = 0; col < size; col++){
+                    int value = 0;
+                    for (int i = 0; i < size; i++){
+                        value += tdarr[row][i] * obj.tdarr[i][col];
+                    }
+                    res.Append(value,row,col);
+                }
+            }
+            return res;
+        }
+        int getDiagonalSum(){
+            //Return the sum of all the diagonal elements in the matrix
+            int sum = 0;
+            for (int row = 0; row<size;row++){
+                sum += tdarr[row][row] + tdarr[row][size-1-row];
+            }
+            return sum;
+        }
+        void SwapRows(int r1,int r2){
+            //Swap two rows of the matrix
+            double* temp = tdarr[r1];
+            tdarr[r1] = tdarr[r2];
+            tdarr[r2] = temp;
+        }
+        void Print(){
+            //Print the matrix
+            for (int i = 0; i<size;i++){
+                cout << "\n";
+                for (int j = 0; j<size;j++){
+                    cout << tdarr[i][j] << " ";
+                }
+            }
+        }
+        void Append(double value, int row, int col){
+            //Change a value in the matrix
+            tdarr[row][col] = value;
+        }
+};
 
-const int MAX_SIZE = 4; // Adjust if necessary
-
-void read_matrix_from_stream(double matrix_1[][MAX_SIZE], 
-                             double matrix_2[][MAX_SIZE], 
-                             int &matrix_size) {
-
-  cout << "Enter the size of the matrices: ";
-  cin >> matrix_size;
-
-  // TODO: Read matrix data from cin into matrix_1 and matrix_2
-  //       Make sure to handle potential errors and invalid input
-
+Matrix getMatrixFromFile(char mode = '1'){
+    //Get a matrix from a file
+    //'1' will get the first matrix, '2' will get the second
+    ifstream inputFile ("matrix-data-file.txt"); 
+    Matrix mat;
+    if (inputFile.is_open()){
+        if (inputFile.good()) {
+            int size;
+            inputFile >> size;
+            mat = Matrix(size);
+            if (mode == '2'){
+                for (int i = 0; i< size*size;i++){
+                    string dummy;
+                    inputFile >> dummy;
+                }
+            }
+            for (int i = 0; i < size;i++){
+                for (int j = 0; j<size; j++){
+                    int value;
+                    inputFile >> value;
+                    mat.Append(value,i,j);
+                }
+            }
+        }
+    }
+    inputFile.close();
+    return mat;
 }
 
-void print_matrix(const double matrix[][MAX_SIZE], int matrix_size) {
-  // TODO: Print the matrix to the console
-}
-
-void print_matrix(const double matrix_1[][MAX_SIZE], 
-                 const double matrix_2[][MAX_SIZE], 
-                 int matrix_size) {
-  // TODO: Print both matrices to the console
-}
-
-void add_matrices(const double matrix_1[][MAX_SIZE], 
-                 const double matrix_2[][MAX_SIZE], 
-                 double result[][MAX_SIZE], 
-                 int matrix_size) {
-  // TODO: Implement matrix addition and store the result in 'result'
-}
-
-void multiply_matrices(const double matrix_1[][MAX_SIZE], 
-                      const double matrix_2[][MAX_SIZE], 
-                      double result[][MAX_SIZE], 
-                      int matrix_size) {
-  // TODO: Implement matrix multiplication and store the result in 'result'
-}
-
-void get_diagonal_sum(const double matrix[][MAX_SIZE], int matrix_size) {
-  // TODO: Calculate and print the sum of the diagonal elements
-}
-
-void swap_matrix_row(double matrix[][MAX_SIZE], int matrix_size, int row1, int row2) {
-  // TODO: Swap the rows 'row1' and 'row2' in the matrix
-  //       Handle invalid row indices
-}
-
-int main(int argc, char *argv[]) {
-  double matrix_1[MAX_SIZE][MAX_SIZE], matrix_2[MAX_SIZE][MAX_SIZE];
-  int matrix_size;
-
-  read_matrix_from_stream(matrix_1, matrix_2, matrix_size);
-  cout << "print_matrix" << endl;
-  print_matrix(matrix_1, matrix_2, matrix_size);
-
-  double add_result[MAX_SIZE][MAX_SIZE];
-  add_matrices(matrix_1, matrix_2, add_result, matrix_size);
-  cout << "add_matrices result:" << endl;
-  print_matrix(add_result, matrix_size);
-
-  double multiply_result[MAX_SIZE][MAX_SIZE];
-  multiply_matrices(matrix_1, matrix_2, multiply_result, matrix_size);
-  cout << "multiply_matrices result:" << endl;
-  print_matrix(multiply_result, matrix_size);
-
-  cout << "get matrix diagonal sum" << endl;
-  get_diagonal_sum(matrix_1, matrix_size);
-
-  cout << "swap matrix rows" << endl;
-  swap_matrix_row(matrix_1, matrix_size, 0, 1);
-
-  return 0;
+int main(){
+    //Getting input from the inputFile
+    Matrix m1_ = getMatrixFromFile();
+    Matrix m2_ = getMatrixFromFile('2');
+    //Performing and printing different operations
+    cout << "Matrix 1 (M1):";
+    m1_.Print();
+    cout << "\n\nMatrix 2 (M2):";
+    m2_.Print();
+    cout << "\n\nM1 + M2:";
+    (m1_+m2_).Print();
+    cout << "\n\nM1 * M2:";
+    (m1_*m2_).Print();
+    cout << "\n\nM1 Diagonal Sum:\n" << m1_.getDiagonalSum();
+    cout << "\n\nM2 Diagonal Sum:\n" << m2_.getDiagonalSum();
+    cout << "\n\nResult of swapping rows 1 and 2 of M1";
+    m1_.SwapRows(0,1);
+    m1_.Print();
+    cout << "\n\nResult of swappoing rows 2 and 3 of M2";
+    m2_.SwapRows(1,2);
+    m2_.Print();
+    //Exiting
+    char exit;
+    cout << "\n\nType anything and press enter to exit: ";
+    cin >> exit;
 }
